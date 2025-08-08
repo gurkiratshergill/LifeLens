@@ -455,6 +455,7 @@ def show_data_types(df):
         })
     
     col_df = pd.DataFrame(col_info)
+    col_df["Unique Values"] = col_df["Unique Values"].astype(str)
     st.dataframe(col_df, use_container_width=True)
     
     # Categorize columns by type
@@ -1178,10 +1179,22 @@ def show_correlation_analysis(df):
     if 'Year' in numerical_cols:
         numerical_cols.remove('Year')
     
-    # Calculate correlation matrix
-    corr_matrix = df[numerical_cols].corr()
-    
-    # Correlation heatmap
+    column_rename_map = {
+    "Polio": "Polio Immunization (% 1yr olds)",
+    "Alcohol":"Alcohol (per capital in liters)",
+    "percentage expenditure":"Percentage Expenditure (Gross per capita)",
+    "Hepatitis B":"Hepatitis Immunization (% 1yr olds)",
+    "Measles":"Measles (reported per 1000 pop)",
+    "Total expenditure":"Total expenditure (Healthcare %)",
+    "Diphtheria":"Diphtheria Immunization",
+    "GDP":"GDP (per capita in USD)",
+    "infant deaths": "Infant Deaths (per 1000 pop)"
+    }
+
+    # Rename columns for correlation analysis
+    corr_matrix = df[numerical_cols].rename(columns=column_rename_map).corr()
+
+    # Now use corr_matrix for your heatmap
     fig1 = px.imshow(
         corr_matrix,
         title='Correlation Matrix of Health and Economic Indicators',
